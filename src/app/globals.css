@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-purple-900: #1a0b2e;
+  --color-purple-800: #2d1354;
+  --color-purple-700: #441885;
+  --color-purple-600: #5b21b6;
+  --color-purple-500: #7c3aed;
+  --color-purple-400: #8b5cf6;
+  --color-purple-300: #a78bfa;
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
+  --color-card: #18181b;
+  --color-card-foreground: #fafafa;
+  --color-muted: #27272a;
+  --color-muted-foreground: #a1a1aa;
+}
+
+@layer base {
+  :root {
+    --background: #09090b;
+    --foreground: #fafafa;
+    --card: #18181b;
+    --card-foreground: #fafafa;
+    --muted: #27272a;
+    --muted-foreground: #a1a1aa;
+  }
+}
+
+@layer base {
+  * {
+    border-color: var(--color-muted);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    @apply antialiased min-h-screen selection:bg-purple-500/30 selection:text-purple-200;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-black/40 backdrop-blur-md border border-white/5;
+  }
+  .glass-card {
+    @apply bg-white/[0.02] backdrop-blur-lg border border-white/10 shadow-[0_4px_30px_rgba(0,0,0,0.1)];
+  }
+  .glow-purple {
+    box-shadow: 0 0 20px -5px theme('colors.purple.500');
+  }
+}
