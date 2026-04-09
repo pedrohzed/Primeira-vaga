@@ -3,6 +3,8 @@ import { FileText, Bookmark, Settings, CheckCircle2, ChevronRight, BriefcaseBusi
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 import { JobActions } from "@/components/jobs/JobActions";
+import { DeleteResumeBtn } from "@/components/profile/DeleteResumeBtn";
+import { DeleteAccountBtn } from "@/components/profile/DeleteAccountBtn";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -24,8 +26,12 @@ export default async function DashboardPage() {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-12 border-b border-white/5 pb-8">
           <div className="flex items-start gap-6">
-            <div className="h-20 w-20 rounded-full bg-purple-900 flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase shrink-0">
-              {profile.name?.charAt(0) || 'E'}
+            <div className="h-20 w-20 rounded-full bg-purple-900 overflow-hidden flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase shrink-0">
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                profile.name?.charAt(0) || 'E'
+              )}
             </div>
             <div>
               <h1 className="text-3xl font-bold text-white">{company?.name || profile.name} <span className="text-sm bg-purple-600/20 text-purple-400 px-2 py-1 rounded ml-2 align-middle">Empresa</span></h1>
@@ -41,6 +47,9 @@ export default async function DashboardPage() {
             </Button>
             <Button asChild>
               <Link href="/postar-vaga"><BriefcaseBusiness className="h-4 w-4 mr-2" /> Postar Nova Vaga</Link>
+            </Button>
+            <Button variant="secondary" asChild>
+              <Link href="/mensagens">Mensagens</Link>
             </Button>
           </div>
         </div>
@@ -92,17 +101,26 @@ export default async function DashboardPage() {
     <div className="container mx-auto px-4 py-12">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/5 pb-8">
         <div className="flex items-center gap-6">
-          <div className="h-20 w-20 rounded-full bg-purple-900 flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase">
-            {profile?.name?.charAt(0) || 'C'}
+          <div className="h-20 w-20 rounded-full bg-purple-900 overflow-hidden flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
+            ) : (
+              profile?.name?.charAt(0) || 'C'
+            )}
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white">{profile?.name}</h1>
             <p className="text-zinc-400">{profile?.area || 'Buscando oportunidades'} • {user.email}</p>
           </div>
         </div>
-        <Button variant="outline" asChild>
-          <Link href="/cadastro"><Settings className="h-4 w-4 mr-2" /> Editar Perfil</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/cadastro"><Settings className="h-4 w-4 mr-2" /> Editar Perfil</Link>
+          </Button>
+          <Button variant="secondary" asChild>
+            <Link href="/mensagens">Mensagens</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -138,11 +156,15 @@ export default async function DashboardPage() {
               </Button>
             )}
             {profile?.resume_url && (
-              <Button className="w-full mt-2" variant="outline" asChild>
-                <a href={profile.resume_url} target="_blank" rel="noopener noreferrer">Visualizar PDF</a>
-              </Button>
+              <>
+                <Button className="w-full mt-2" variant="outline" asChild>
+                  <a href={profile.resume_url} target="_blank" rel="noopener noreferrer">Visualizar PDF</a>
+                </Button>
+                <DeleteResumeBtn userId={user.id} />
+              </>
             )}
           </div>
+          <DeleteAccountBtn userId={user.id} />
         </div>
 
         <div className="lg:col-span-2 space-y-12">

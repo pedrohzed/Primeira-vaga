@@ -5,6 +5,7 @@ import { Loader2, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 export default function CadastroEmpresaPage() {
   const [name, setName] = useState("");
@@ -85,6 +86,10 @@ export default function CadastroEmpresaPage() {
       </div>
 
       <div className="bg-zinc-900 border border-white/5 rounded-2xl p-6 md:p-8">
+        <div className="flex justify-center mb-8">
+           {user && <AvatarUpload userId={user.id} />}
+        </div>
+        
         {error && (
            <div className="mb-6 rounded-lg bg-red-500/10 p-4 text-sm text-red-500 border border-red-500/20">
              {error}

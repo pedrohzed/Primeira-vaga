@@ -5,6 +5,7 @@ import { Upload, ChevronRight, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 
 export default function CadastroCurriculoPage() {
   const [step, setStep] = useState(1);
@@ -122,7 +123,11 @@ export default function CadastroCurriculoPage() {
 
         {step === 1 ? (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold mb-6 text-white">Informações Básicas</h2>
+            <h2 className="text-xl font-semibold mb-6 text-white text-center">Informações Básicas</h2>
+
+            <div className="flex justify-center mb-8">
+              {user && <AvatarUpload userId={user.id} />}
+            </div>
             
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-300">Área de interesse principal</label>
