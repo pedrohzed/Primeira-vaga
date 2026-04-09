@@ -36,10 +36,41 @@ export default function MensagensPage() {
       if (!data?.user) return;
       setCurrentUser(data.user);
 
-      // Fetch contacts realistically: any user you have messages with.
-      // For simplicity, we just fetch all profiles that are not you (in a real app, query based on applications!)
-      const { data: profs } = await supabase.from('profiles').select('id, name, avatar_url').neq('id', data.user.id).limit(10);
-      if (profs) setContacts(profs);
+      const searchParams = new URLSearchParams(window.location.search);
+      const contactFromUrl = searchParams.get('contact');
+
+      // Fetch all messages involving the user to find contacts
+      const { data: userMessages } = await supabase
+        .from('messages')
+        .select('sender_id, receiver_id')
+        .or(`sender_id.eq.${data.user.id},receiver_id.eq.${data.user.id}`);
+
+      const contactIds = new Set<string>();
+      if (userMessages) {
+        userMessages.forEach((m: any) => {
+          if (m.sender_id !== data.user.id) contactIds.add(m.sender_id);
+          if (m.receiver_id !== data.user.id) contactIds.add(m.receiver_id);
+        });
+      }
+      
+      if (contactFromUrl) contactIds.add(contactFromUrl);
+
+      if (contactIds.size > 0) {
+        const { data: profs } = await supabase
+          .from('profiles')
+          .select('id, name, avatar_url')
+          .in('id', Array.from(contactIds));
+        
+        if (profs) {
+           setContacts(profs);
+           if (contactFromUrl) {
+             const ac = profs.find(p => p.id === contactFromUrl);
+             if (ac) setActiveContact(ac);
+           } else if (profs.length > 0) {
+             setActiveContact(profs[0]);
+           }
+        }
+      }
       
       setIsLoading(false);
     }

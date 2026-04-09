@@ -102,9 +102,14 @@ export default async function EmpresaDetailsPage({ params }: EmpresaPageProps) {
           <div className="bg-gradient-to-br from-purple-900/40 to-zinc-900 border border-purple-500/20 rounded-2xl p-6 text-center">
             <h3 className="font-bold text-white mb-2">Trabalhar na {company.name}</h3>
             <p className="text-sm text-zinc-300 mb-6">Acompanhe as oportunidades e prepare seu currículo para se destacar nos processos seletivos desta empresa.</p>
-            <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
-              <Link href="/cadastro">Cadastrar meu currículo</Link>
-            </Button>
+            <div className="space-y-3">
+              <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
+                <Link href="/cadastro">Cadastrar meu currículo</Link>
+              </Button>
+              <Button className="w-full" variant="outline" asChild>
+                <Link href={`/mensagens?contact=${company.user_id}`}>Falar com o Recrutador</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </div>
