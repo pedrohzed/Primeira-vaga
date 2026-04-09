@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FileText, Bookmark, Settings, CheckCircle2, ChevronRight, BriefcaseBusiness } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { JobActions } from "@/components/jobs/JobActions";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -50,9 +51,12 @@ export default async function DashboardPage() {
                     <h3 className="font-bold text-white text-lg">{job.title}</h3>
                     <p className="text-sm text-zinc-400">{job.location} • {job.type}</p>
                   </div>
-                  <Button variant="outline" asChild>
-                    <Link href={`/vagas/${job.id}`}>Ver Detalhes</Link>
-                  </Button>
+                  <div className="flex flex-col sm:flex-row items-center gap-3">
+                    <Button variant="outline" asChild>
+                      <Link href={`/vagas/${job.id}`}>Ver Detalhes</Link>
+                    </Button>
+                    <JobActions jobId={job.id} />
+                  </div>
                 </div>
               ))}
             </div>

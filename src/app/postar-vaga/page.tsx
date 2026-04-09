@@ -17,8 +17,32 @@ export default function PostarVagaPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [editId, setEditId] = useState<string | null>(null);
   const router = useRouter();
   const supabase = createClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("edit");
+    if (id) {
+      setEditId(id);
+      const fetchJob = async () => {
+        const { data } = await supabase.from('jobs').select('*').eq('id', id).single();
+        if (data) {
+          setTitle(data.title);
+          setDescription(data.description);
+          setLocation(data.location);
+          setType(data.type);
+          setSalaryRange(data.salary_range || "");
+          setRequirements((data.requirements || []).join("\n"));
+          // Also prefill companyName based on company_id
+          const { data: comp } = await supabase.from('companies').select('name').eq('id', data.company_id).single();
+          if (comp) setCompanyName(comp.name);
+        }
+      };
+      fetchJob();
+    }
+  }, [supabase]);
 
   const handlePostJob = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +105,7 @@ export default function PostarVagaPage() {
     // Insert job
     const reqArray = requirements.split("\n").filter(r => r.trim() !== "");
 
-    const { error: jobError } = await supabase.from("jobs").insert({
+    const payload = {
       company_id: companyId,
       title,
       description,
@@ -89,14 +113,23 @@ export default function PostarVagaPage() {
       type,
       salary_range: salaryRange,
       requirements: reqArray,
-    });
+    };
+
+    let jobError;
+    if (editId) {
+      const { error } = await supabase.from("jobs").update(payload).eq('id', editId);
+      jobError = error;
+    } else {
+      const { error } = await supabase.from("jobs").insert(payload);
+      jobError = error;
+    }
 
     if (jobError) {
       setError(jobError.message);
     } else {
-      setSuccess("Vaga postada com sucesso!");
+      setSuccess(editId ? "Vaga atualizada com sucesso!" : "Vaga postada com sucesso!");
       setTimeout(() => {
-        router.push("/vagas");
+        router.push("/dashboard");
       }, 2000);
     }
 
@@ -106,7 +139,7 @@ export default function PostarVagaPage() {
   return (
     <div className="container mx-auto max-w-3xl px-4 py-12">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Postar Nova Vaga</h1>
+        <h1 className="text-3xl font-bold text-white">{editId ? "Editar Vaga" : "Postar Nova Vaga"}</h1>
         <p className="mt-2 text-zinc-400">Preencha os detalhes da oportunidade abaixo.</p>
       </div>
 
@@ -209,7 +242,7 @@ export default function PostarVagaPage() {
         </div>
 
         <Button type="submit" className="w-full h-12 text-base" disabled={isLoading}>
-          {isLoading ? "Postando..." : "Postar Vaga"}
+          {isLoading ? (editId ? "Atualizando..." : "Postando...") : (editId ? "Atualizar Vaga" : "Postar Vaga")}
         </Button>
       </form>
     </div>

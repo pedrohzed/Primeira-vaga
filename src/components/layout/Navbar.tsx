@@ -16,12 +16,16 @@ export function Navbar() {
   const supabase = createClient();
 
   useEffect(() => {
+    const fetchRole = async (userId: string) => {
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', userId).single();
+      if (profile) setRole(profile.role);
+    };
+
     const fetchUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUser(data.user);
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).single();
-        if (profile) setRole(profile.role);
+        fetchRole(data.user.id);
       } else {
         setUser(null);
         setRole(null);
@@ -32,14 +36,20 @@ export function Navbar() {
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        setUser(session?.user || null);
+        if (session?.user) {
+          setUser(session.user);
+          fetchRole(session.user.id);
+        } else {
+          setUser(null);
+          setRole(null);
+        }
       }
     );
 
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, [supabase.auth]);
+  }, [supabase]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
