@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter } from "lucide-react";
+import { Github, Youtube } from "lucide-react";
 
 export function Footer() {
   return (
@@ -23,7 +23,7 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-zinc-100 mb-4">Nosso Código</h4>
             <div className="flex space-x-4">
-              <a href="#" className="text-zinc-400 hover:text-purple-400 transition-colors"><Twitter className="h-5 w-5" /></a>
+              <a href="https://www.youtube.com/channel/UChOCq98MBPs0m1-HnrkYQ9g" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-purple-400 transition-colors"><Youtube className="h-5 w-5" /></a>
               <a href="https://github.com/pedrohzed/Primeira-vaga" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-purple-400 transition-colors"><Github className="h-5 w-5" /></a>
             </div>
           </div>

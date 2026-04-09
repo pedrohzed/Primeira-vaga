@@ -1,22 +1,56 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter } from "lucide-react";
 import { JobCard } from "@/components/jobs/JobCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MOCK_JOBS, TAGS } from "@/lib/data";
+import { MOCK_JOBS, TAGS, Job } from "@/lib/data";
+import { createClient } from "@/lib/supabase/client";
 
 export default function VagasPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [jobs, setJobs] = useState<Job[]>(MOCK_JOBS);
+  const supabase = createClient();
 
-  const filteredJobs = MOCK_JOBS.filter((job) => {
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select(`
+          id, title, description, location, type, requirements, created_at,
+          companies ( name )
+        `)
+        .order('created_at', { ascending: false });
+        
+      if (data && !error) {
+        const formattedJobs: Job[] = data.map((j: any) => ({
+          id: j.id,
+          title: j.title,
+          company: j.companies?.name || 'Empresa Confidencial',
+          location: j.location,
+          type: j.type,
+          description: j.description,
+          requirements: j.requirements || [],
+          tags: [], // Could map tags if implemented
+          createdAt: j.created_at
+        }));
+        // Show supabase jobs first, then mock jobs
+        setJobs([...formattedJobs, ...MOCK_JOBS]);
+      }
+    };
+    fetchJobs();
+  }, []);
+
+  const filteredJobs = jobs.filter((job) => {
     const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           job.company.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesTag = selectedTag ? job.tags.some(t => t.id === selectedTag) : true;
+    const matchesType = selectedTypes.length > 0 ? selectedTypes.includes(job.type.toLowerCase()) : true;
     
-    return matchesSearch && matchesTag;
+    return matchesSearch && matchesTag && matchesType;
   });
 
   return (
@@ -41,8 +75,19 @@ export default function VagasPage() {
                 <label className="text-sm font-medium text-zinc-400 mb-2 block">Tipo de Vaga</label>
                 <div className="space-y-2">
                   {['Remoto', 'Híbrido', 'Presencial'].map(type => (
-                    <label key={type} className="flex items-center gap-2 text-zinc-200">
-                      <input type="checkbox" className="rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-600" />
+                    <label key={type} className="flex items-center gap-2 text-zinc-200 cursor-pointer">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-zinc-700 bg-zinc-800 text-purple-600 focus:ring-purple-600"
+                        checked={selectedTypes.includes(type.toLowerCase())}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedTypes([...selectedTypes, type.toLowerCase()]);
+                          } else {
+                            setSelectedTypes(selectedTypes.filter(t => t !== type.toLowerCase()));
+                          }
+                        }}
+                      />
                       {type}
                     </label>
                   ))}
@@ -100,7 +145,7 @@ export default function VagasPage() {
             ) : (
               <div className="col-span-full py-12 text-center border border-dashed border-white/10 rounded-xl">
                 <p className="text-zinc-400">Nenhuma vaga encontrada com os filtros atuais.</p>
-                <Button variant="link" onClick={() => { setSearchTerm(""); setSelectedTag(null); }}>
+                <Button variant="link" onClick={() => { setSearchTerm(""); setSelectedTag(null); setSelectedTypes([]); }}>
                   Limpar filtros
                 </Button>
               </div>

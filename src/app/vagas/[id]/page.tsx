@@ -4,6 +4,7 @@ import { ArrowLeft, Building2, MapPin, Clock, Calendar, CheckCircle2 } from "luc
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MOCK_JOBS } from "@/lib/data";
+import { createClient } from "@/lib/supabase/server";
 
 interface JobPageProps {
   params: Promise<{
@@ -16,7 +17,37 @@ interface JobPageProps {
 // Vamos lidar com o mock simplificado.
 export default async function JobDetailsPage({ params }: JobPageProps) {
   const p = await params;
-  const job = MOCK_JOBS.find((j) => j.id === p.id);
+  const supabase = await createClient();
+
+  // Try fetching from supbase
+  let job: any = null;
+  const { data, error } = await supabase
+    .from('jobs')
+    .select(`
+      id, title, description, location, type, requirements, created_at,
+      companies ( name )
+    `)
+    .eq('id', p.id)
+    .single();
+
+  if (data) {
+    job = {
+      id: data.id,
+      title: data.title,
+      company: data.companies?.name || 'Empresa Confidencial',
+      location: data.location,
+      type: data.type,
+      description: data.description,
+      requirements: data.requirements || [],
+      tags: [],
+      createdAt: data.created_at
+    };
+  }
+
+  // Fallback to MOCK_JOBS
+  if (!job) {
+    job = MOCK_JOBS.find((j) => j.id === p.id);
+  }
 
   if (!job) {
     notFound();

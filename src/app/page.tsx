@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, Target, Zap } from "lucide-react";
+import { Sparkles, Target, Zap, LogIn, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { JobCard } from "@/components/jobs/JobCard";
-import { MOCK_JOBS } from "@/lib/data";
 
 export default function Home() {
-  const recentJobs = MOCK_JOBS.slice(0, 3);
-
   return (
     <div className="flex flex-col flex-1">
       {/* Hero Section */}
@@ -54,14 +50,14 @@ export default function Home() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-8 rounded-full" asChild>
-              <Link href="/vagas">
-                Ver vagas agora <ArrowRight className="ml-2 h-5 w-5" />
+            <Button size="lg" className="w-full sm:w-auto text-lg h-14 px-10 rounded-full" asChild>
+              <Link href="/login">
+                Entrar Agora <LogIn className="ml-2 h-5 w-5" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="w-full sm:w-auto text-lg h-14 px-8 rounded-full" asChild>
-              <Link href="/cadastro">
-                Cadastrar currículo
+              <Link href="/register">
+                Criar Conta Grátis <UserPlus className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </motion.div>
@@ -97,33 +93,6 @@ export default function Home() {
                 <p className="text-zinc-400">{feature.desc}</p>
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Recent Jobs Section */}
-      <section className="py-24">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <h2 className="text-3xl font-bold mb-2">Vagas Recentes</h2>
-              <p className="text-zinc-400">As oportunidades mais frescas na plataforma.</p>
-            </div>
-            <Button variant="ghost" className="hidden sm:flex" asChild>
-              <Link href="/vagas">Ver todas <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentJobs.map(job => (
-              <JobCard key={job.id} job={job} />
-            ))}
-          </div>
-          
-          <div className="mt-8 text-center sm:hidden">
-            <Button variant="outline" className="w-full" asChild>
-              <Link href="/vagas">Ver todas as vagas</Link>
-            </Button>
           </div>
         </div>
       </section>
