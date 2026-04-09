@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 export default function PostarVagaPage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [companyName, setCompanyName] = useState("");
   const [location, setLocation] = useState("");
   const [type, setType] = useState("remoto");
   const [salaryRange, setSalaryRange] = useState("");
@@ -35,9 +34,6 @@ export default function PostarVagaPage() {
           setType(data.type);
           setSalaryRange(data.salary_range || "");
           setRequirements((data.requirements || []).join("\n"));
-          // Also prefill companyName based on company_id
-          const { data: comp } = await supabase.from('companies').select('name').eq('id', data.company_id).single();
-          if (comp) setCompanyName(comp.name);
         }
       };
       fetchJob();
@@ -88,7 +84,7 @@ export default function PostarVagaPage() {
     if (!company) {
       const { data: newCompany, error: createError } = await supabase
         .from("companies")
-        .insert({ user_id: userData.user.id, name: companyName })
+        .insert({ user_id: userData.user.id, name: profile.name || 'Nova Empresa' })
         .select()
         .single();
       
@@ -156,7 +152,7 @@ export default function PostarVagaPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
+          <div className="md:col-span-2">
             <label className="mb-2 block text-sm font-medium text-zinc-300">Título da Vaga</label>
             <input
               type="text"
@@ -165,17 +161,6 @@ export default function PostarVagaPage() {
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
               placeholder="Ex: Desenvolvedor Front-end Junior"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-zinc-300">Nome da Empresa</label>
-            <input
-              type="text"
-              required
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
-              placeholder="Ex: Tech Solutions"
             />
           </div>
         </div>

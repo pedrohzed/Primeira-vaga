@@ -22,19 +22,27 @@ export default async function DashboardPage() {
 
     return (
       <div className="container mx-auto px-4 py-12 max-w-5xl">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-white/5 pb-8">
-          <div className="flex items-center gap-6">
-            <div className="h-20 w-20 rounded-full bg-purple-900 flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase">
+        <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 mb-12 border-b border-white/5 pb-8">
+          <div className="flex items-start gap-6">
+            <div className="h-20 w-20 rounded-full bg-purple-900 flex items-center justify-center text-3xl font-bold text-white border-2 border-purple-500 glow-purple uppercase shrink-0">
               {profile.name?.charAt(0) || 'E'}
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">{profile.name} <span className="text-sm bg-purple-600/20 text-purple-400 px-2 py-1 rounded ml-2">Empresa</span></h1>
-              <p className="text-zinc-400">{user.email}</p>
+              <h1 className="text-3xl font-bold text-white">{company?.name || profile.name} <span className="text-sm bg-purple-600/20 text-purple-400 px-2 py-1 rounded ml-2 align-middle">Empresa</span></h1>
+              <p className="text-zinc-400 mb-4">{user.email}</p>
+              {company && company.description && (
+                <p className="text-sm text-zinc-300 max-w-2xl bg-zinc-900/50 p-4 border border-white/5 rounded-xl">{company.description}</p>
+              )}
             </div>
           </div>
-          <Button asChild>
-            <Link href="/postar-vaga"><BriefcaseBusiness className="h-4 w-4 mr-2" /> Postar Nova Vaga</Link>
-          </Button>
+          <div className="flex flex-col gap-3 w-full md:w-auto">
+            <Button variant="outline" asChild>
+              <Link href="/cadastro-empresa"><Settings className="h-4 w-4 mr-2" /> Editar Perfil</Link>
+            </Button>
+            <Button asChild>
+              <Link href="/postar-vaga"><BriefcaseBusiness className="h-4 w-4 mr-2" /> Postar Nova Vaga</Link>
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-6">

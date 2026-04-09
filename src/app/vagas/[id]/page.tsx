@@ -12,29 +12,36 @@ interface JobPageProps {
   }>;
 }
 
-// Em App Router Next.js 15, params é agora uma Promise em funções assíncronas,
-// ou pode ser acessado diretamente se não usarmos async, mas a build do Next recomenda await params. 
-// Vamos lidar com o mock simplificado.
 export default async function JobDetailsPage({ params }: JobPageProps) {
   const p = await params;
   const supabase = await createClient();
+
+  let userRole = 'candidato';
+  const { data: userData } = await supabase.auth.getUser();
+  if (userData?.user) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', userData.user.id).single();
+    if (profile) userRole = profile.role;
+  }
 
   // Try fetching from supbase
   let job: any = null;
   const { data, error } = await supabase
     .from('jobs')
     .select(`
-      id, title, description, location, type, requirements, created_at,
-      companies ( name )
+      id, title, description, location, type, requirements, created_at, company_id,
+      companies ( id, name )
     `)
     .eq('id', p.id)
     .single();
 
   if (data) {
+    const compName = (Array.isArray(data.companies) ? data.companies[0]?.name : (data.companies as any)?.name) || 'Empresa Confidencial';
+    const compId = (Array.isArray(data.companies) ? data.companies[0]?.id : (data.companies as any)?.id) || data.company_id;
     job = {
       id: data.id,
       title: data.title,
-      company: (Array.isArray(data.companies) ? data.companies[0]?.name : (data.companies as any)?.name) || 'Empresa Confidencial',
+      companyName: compName,
+      companyId: compId,
       location: data.location,
       type: data.type,
       description: data.description,
@@ -94,14 +101,16 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <Button size="lg" className="w-full md:w-auto">
-                Candidatar-se agora
-              </Button>
-              <Button size="lg" variant="secondary" className="w-full md:w-auto">
-                Salvar vaga
-              </Button>
-            </div>
+            {userRole !== 'empresa' && (
+              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                <Button size="lg" className="w-full md:w-auto">
+                  Candidatar-se agora
+                </Button>
+                <Button size="lg" variant="secondary" className="w-full md:w-auto">
+                  Salvar vaga
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className="mt-8 pt-8 border-t border-white/5 flex flex-wrap gap-2">
@@ -118,9 +127,6 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
             <h2 className="text-2xl font-bold text-white mb-4">Descrição da vaga</h2>
             <div className="prose prose-invert max-w-none text-zinc-300">
               <p>{job.description}</p>
-              <p className="mt-4">
-                Estamos em busca de pessoas engajadas e que queiram aprender e crescer junto com o nosso negócio. Se você se identifica com essa cultura de colaboração, essa vaga é para você!
-              </p>
             </div>
           </section>
 
@@ -140,8 +146,12 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
         <div className="space-y-6">
           <div className="bg-zinc-900 border border-white/5 rounded-xl p-6">
             <h3 className="font-bold text-white mb-4">Sobre a empresa</h3>
-            <p className="text-sm text-zinc-400 mb-4">A {job.company} é uma empresa inovadora buscando os melhores talentos jovens para integrar seu time revolucionário.</p>
-            <Button variant="outline" className="w-full">Ver perfil da empresa</Button>
+            <p className="text-sm text-zinc-400 mb-4">A {job.companyName} é uma empresa incrível buscando novos talentos na plataforma.</p>
+            {job.companyId && (
+              <Button variant="outline" className="w-full" asChild>
+                <Link href={`/empresas/${job.companyId}`}>Ver perfil da empresa</Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>
