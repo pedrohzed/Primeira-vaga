@@ -124,6 +124,19 @@ export default function MensagensPage() {
     const content = newMessage.trim();
     setNewMessage("");
 
+    const newMsg = {
+      id: crypto.randomUUID(),
+      sender_id: currentUser.id,
+      receiver_id: activeContact.id,
+      content,
+      created_at: new Date().toISOString()
+    };
+
+    setMessages(prev => [...prev, newMsg]);
+    setTimeout(() => {
+       if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }, 100);
+
     await supabase.from('messages').insert({
       sender_id: currentUser.id,
       receiver_id: activeContact.id,

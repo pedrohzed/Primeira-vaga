@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { DeleteAccountBtn } from "@/components/profile/DeleteAccountBtn";
 
 export default function CadastroEmpresaPage() {
   const [name, setName] = useState("");
@@ -135,7 +136,8 @@ export default function CadastroEmpresaPage() {
             />
           </div>
 
-          <div className="pt-6 flex justify-end">
+          <div className="pt-6 flex justify-between items-center border-t border-white/5 mt-8 pt-8">
+            {user && <DeleteAccountBtn userId={user.id} />}
             <Button onClick={handleComplete} disabled={isLoading || !name}>
                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Concluir Perfil"}
             </Button>

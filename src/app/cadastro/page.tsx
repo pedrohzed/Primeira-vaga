@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AvatarUpload } from "@/components/profile/AvatarUpload";
+import { DeleteAccountBtn } from "@/components/profile/DeleteAccountBtn";
 
 export default function CadastroCurriculoPage() {
   const [step, setStep] = useState(1);
@@ -154,7 +155,8 @@ export default function CadastroCurriculoPage() {
               />
             </div>
 
-            <div className="pt-6 flex justify-end">
+            <div className="flex justify-between items-center gap-4 mt-8 pt-6 border-t border-white/10">
+              {user && <DeleteAccountBtn userId={user.id} />}
               <Button onClick={() => setStep(2)}>
                 Próximo passo <ChevronRight className="ml-2 h-4 w-4" />
               </Button>

@@ -13,6 +13,12 @@ interface EmpresaPageProps {
 export default async function EmpresaDetailsPage({ params }: EmpresaPageProps) {
   const p = await params;
   const supabase = await createClient();
+  const { data: userData } = await supabase.auth.getUser();
+  let userRole = 'candidato';
+  if (userData?.user) {
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', userData.user.id).single();
+    if (profile) userRole = profile.role;
+  }
 
   const { data: company, error } = await supabase
     .from('companies')
@@ -103,9 +109,11 @@ export default async function EmpresaDetailsPage({ params }: EmpresaPageProps) {
             <h3 className="font-bold text-white mb-2">Trabalhar na {company.name}</h3>
             <p className="text-sm text-zinc-300 mb-6">Acompanhe as oportunidades e prepare seu currículo para se destacar nos processos seletivos desta empresa.</p>
             <div className="space-y-3">
-              <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
-                <Link href="/cadastro">Cadastrar meu currículo</Link>
-              </Button>
+              {userRole !== 'empresa' && (
+                <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
+                  <Link href="/cadastro">Cadastrar meu currículo</Link>
+                </Button>
+              )}
               <Button className="w-full" variant="outline" asChild>
                 <Link href={`/mensagens?contact=${company.user_id}`}>Falar com o Recrutador</Link>
               </Button>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { MOCK_JOBS } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
+import { JobActionsCandidate } from "@/components/jobs/JobActionsCandidate";
 
 interface JobPageProps {
   params: Promise<{
@@ -102,14 +103,7 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
             </div>
 
             {userRole !== 'empresa' && (
-              <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                <Button size="lg" className="w-full md:w-auto">
-                  Candidatar-se agora
-                </Button>
-                <Button size="lg" variant="secondary" className="w-full md:w-auto">
-                  Salvar vaga
-                </Button>
-              </div>
+              <JobActionsCandidate jobId={job.id} userId={userData?.user?.id} />
             )}
           </div>
 
