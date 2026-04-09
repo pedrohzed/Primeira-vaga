@@ -7,6 +7,9 @@ import { MOCK_JOBS } from "@/lib/data";
 import { createClient } from "@/lib/supabase/server";
 import { JobActionsCandidate } from "@/components/jobs/JobActionsCandidate";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface JobPageProps {
   params: Promise<{
     id: string;

@@ -4,6 +4,9 @@ import { Building2, ArrowLeft, Globe, MapPin, Calendar, BriefcaseBusiness } from
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface EmpresaPageProps {
   params: Promise<{
     id: string;

@@ -113,8 +113,13 @@ export default function MensagensPage() {
         }
       })
       .subscribe();
+      
+    const pollInterval = setInterval(fetchMessages, 3000);
 
-    return () => { supabase.removeChannel(channel) };
+    return () => { 
+      supabase.removeChannel(channel);
+      clearInterval(pollInterval);
+    };
   }, [currentUser, activeContact, supabase]);
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -151,7 +156,7 @@ export default function MensagensPage() {
       <div className="bg-zinc-900 border border-white/10 rounded-2xl h-full flex overflow-hidden">
         
         {/* Sidebar / Contatos */}
-        <div className="w-1/3 md:w-1/4 border-r border-white/10 bg-zinc-950 flex flex-col">
+        <div className={`w-full md:w-1/4 border-r border-white/10 bg-zinc-950 flex flex-col ${activeContact ? 'hidden md:flex' : 'flex'}`}>
           <div className="p-4 border-b border-white/10">
             <h2 className="font-bold text-white text-lg">Suas Conversas</h2>
           </div>
@@ -175,11 +180,15 @@ export default function MensagensPage() {
         </div>
 
         {/* Chat Area */}
-        <div className="w-2/3 md:w-3/4 flex flex-col bg-zinc-900/50">
+        <div className={`w-full md:w-3/4 flex flex-col bg-zinc-900/50 ${!activeContact ? 'hidden md:flex' : 'flex'}`}>
           {activeContact ? (
             <>
               {/* Header */}
               <div className="p-4 border-b border-white/10 bg-zinc-900 flex items-center gap-3">
+                 <button className="md:hidden p-2 -ml-2 text-zinc-400 hover:text-white" onClick={() => setActiveContact(null)}>
+                   <span className="sr-only">Voltar</span>
+                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                 </button>
                  <div className="h-10 w-10 rounded-full bg-zinc-800 flex items-center justify-center shrink-0 overflow-hidden">
                   {activeContact.avatar_url ? <img src={activeContact.avatar_url} className="h-full w-full object-cover" /> : <UserIcon className="h-5 w-5 text-zinc-500" />}
                 </div>
@@ -199,7 +208,7 @@ export default function MensagensPage() {
                     const isMine = msg.sender_id === currentUser.id;
                     return (
                       <div key={msg.id} className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}>
-                        <div className={`max-w-[70%] rounded-2xl p-3 px-5 ${isMine ? 'bg-purple-600 text-white rounded-tr-none' : 'bg-zinc-800 text-zinc-200 rounded-tl-none'}`}>
+                        <div className={`max-w-[85%] md:max-w-[70%] rounded-2xl p-3 px-5 text-sm md:text-base ${isMine ? 'bg-purple-600 text-white rounded-tr-none' : 'bg-zinc-800 text-zinc-200 rounded-tl-none'}`}>
                           {msg.content}
                         </div>
                       </div>
@@ -209,16 +218,16 @@ export default function MensagensPage() {
               </div>
 
               {/* Input Form */}
-              <form onSubmit={sendMessage} className="p-4 border-t border-white/10 bg-zinc-900 flex gap-2">
+              <form onSubmit={sendMessage} className="p-3 md:p-4 border-t border-white/10 bg-zinc-900 flex gap-2">
                 <input 
                   type="text" 
                   value={newMessage}
                   onChange={e => setNewMessage(e.target.value)}
                   placeholder="Escreva sua mensagem..."
-                  className="flex-1 bg-zinc-950 border border-white/10 rounded-full px-5 text-white focus:outline-none focus:border-purple-500"
+                  className="flex-1 bg-zinc-950 border border-white/10 rounded-full px-4 md:px-5 text-white focus:outline-none focus:border-purple-500"
                 />
-                <Button type="submit" size="icon" className="rounded-full bg-purple-600 hover:bg-purple-700 shrink-0 h-10 w-10" disabled={!newMessage.trim()}>
-                  <Send className="h-4 w-4" />
+                <Button type="submit" size="icon" className="rounded-full bg-purple-600 hover:bg-purple-700 shrink-0 h-10 w-10 md:h-12 md:w-12" disabled={!newMessage.trim()}>
+                  <Send className="h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </form>
             </>
