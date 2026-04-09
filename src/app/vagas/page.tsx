@@ -29,7 +29,7 @@ export default function VagasPage() {
         const formattedJobs: Job[] = data.map((j: any) => ({
           id: j.id,
           title: j.title,
-          company: j.companies?.name || 'Empresa Confidencial',
+          company: (Array.isArray(j.companies) ? j.companies[0]?.name : (j.companies as any)?.name) || 'Empresa Confidencial',
           location: j.location,
           type: j.type,
           description: j.description,

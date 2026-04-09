@@ -34,7 +34,7 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
     job = {
       id: data.id,
       title: data.title,
-      company: data.companies?.name || 'Empresa Confidencial',
+      company: (Array.isArray(data.companies) ? data.companies[0]?.name : (data.companies as any)?.name) || 'Empresa Confidencial',
       location: data.location,
       type: data.type,
       description: data.description,
@@ -105,7 +105,7 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
           </div>
 
           <div className="mt-8 pt-8 border-t border-white/5 flex flex-wrap gap-2">
-            {job.tags.map(tag => (
+            {job.tags.map((tag: any) => (
               <Badge key={tag.id} variant="secondary">{tag.name}</Badge>
             ))}
           </div>
@@ -127,7 +127,7 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">Requisitos</h2>
             <ul className="space-y-3">
-              {job.requirements.map((req, index) => (
+              {job.requirements.map((req: any, index: number) => (
                 <li key={index} className="flex items-start gap-3 text-zinc-300">
                   <CheckCircle2 className="h-6 w-6 text-purple-500 shrink-0" />
                   <span>{req}</span>

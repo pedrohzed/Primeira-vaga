@@ -44,7 +44,7 @@ export default async function DashboardPage() {
             <p className="text-zinc-400">Você ainda não publicou nenhuma vaga.</p>
           ) : (
             <div className="grid gap-4">
-              {jobs.map(job => (
+              {jobs.map((job: any) => (
                 <div key={job.id} className="p-6 rounded-xl bg-zinc-900 border border-white/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div>
                     <h3 className="font-bold text-white text-lg">{job.title}</h3>
@@ -145,7 +145,7 @@ export default async function DashboardPage() {
                 <p className="text-zinc-400">Você ainda não se candidatou a nenhuma vaga.</p>
               ) : applications.map((app: any) => {
                 const jobName = app.jobs?.title;
-                const companyName = app.jobs?.companies?.name;
+                const companyName = Array.isArray(app.jobs?.companies) ? app.jobs?.companies[0]?.name : (app.jobs?.companies as any)?.name;
                 return (
                   <div key={app.id} className="flex items-center justify-between p-4 rounded-xl bg-zinc-900/50 border border-white/5 hover:bg-zinc-900 transition-colors">
                     <div>
@@ -179,7 +179,7 @@ export default async function DashboardPage() {
                 return (
                   <div key={sjob.id} className="p-4 rounded-xl bg-zinc-900/50 border border-white/5">
                     <Link href={`/vagas/${sjob.id}`} className="font-bold text-white hover:text-purple-400 text-lg">{sjob.title}</Link>
-                    <p className="text-sm text-zinc-400 mb-2">{sjob.companies?.name} • {sjob.location}</p>
+                    <p className="text-sm text-zinc-400 mb-2">{(Array.isArray(sjob.companies) ? sjob.companies[0]?.name : (sjob.companies as any)?.name)} • {sjob.location}</p>
                   </div>
                 )
               })}
