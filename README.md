@@ -65,16 +65,17 @@ A plataforma ajuda a:
 # 🖥️ Tecnologias Utilizadas
 
 - HTML  
-- CSS  
-- JavaScript  
-- Git  
-- GitHub  
+- CSS
+- Tailwind 
+- JavaScript
+- Typescript 
+- Next.js
+- Node.js
+- Vercel
+  
 
 ---
 
-# 🚀 Como executar o projeto
+# Como acessar o Website
 
-Clone o repositório:
-
-```bash
-git clone https://github.com/seu-usuario/primeira-vaga
+https://primeira-vaga.vercel.app/
