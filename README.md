@@ -76,6 +76,28 @@ A plataforma ajuda a:
 
 ---
 
+
+📚 Referências Bibliográficas
+As seguintes fontes foram utilizadas para pesquisa e fundamentação do projeto:
+
+Organização das Nações Unidas (ONU).
+Objetivos de Desenvolvimento Sustentável (ODS).
+Disponível em: https://sdgs.un.org/
+
+Organização das Nações Unidas Brasil.
+ODS 8 — Trabalho Decente e Crescimento Econômico.
+Disponível em: https://brasil.un.org/pt-br/sdgs/8
+
+Jornal G1
+desemprego entre jovens
+https://g1.globo.com/trabalho-e-carreira/noticia/2025/04/11/desemprego-entre-jovens-no-brasil-e-mais-que-o-dobro-da-taxa-de-grupo-mais-velho-aponta-pesquisa.ghtml
+
+Revista VEJA
+desemprego juvenil
+https://veja.abril.com.br/coluna/balanco-social/desemprego-entre-jovens-de-18-a-24-anos-e-mais-que-o-dobro-da-media-geral/
+
+---
+
 # Como acessar o Website
 
 https://primeira-vaga.vercel.app/
