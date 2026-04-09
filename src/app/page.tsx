@@ -31,7 +31,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-7xl font-black tracking-tight mb-8 text-white"
+            className="font-ubuntu text-5xl md:text-7xl font-black tracking-tight mb-8 text-white"
           >
             Encontre seu primeiro <br className="hidden md:block"/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-purple-600">

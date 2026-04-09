@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Github, Twitter, Linkedin } from "lucide-react";
+import { Github, Twitter } from "lucide-react";
 
 export function Footer() {
   return (
@@ -21,11 +21,10 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="font-semibold text-zinc-100 mb-4">Siga-nos</h4>
+            <h4 className="font-semibold text-zinc-100 mb-4">Nosso Código</h4>
             <div className="flex space-x-4">
               <a href="#" className="text-zinc-400 hover:text-purple-400 transition-colors"><Twitter className="h-5 w-5" /></a>
-              <a href="#" className="text-zinc-400 hover:text-purple-400 transition-colors"><Linkedin className="h-5 w-5" /></a>
-              <a href="#" className="text-zinc-400 hover:text-purple-400 transition-colors"><Github className="h-5 w-5" /></a>
+              <a href="https://github.com/pedrohzed/Primeira-vaga" target="_blank" rel="noopener noreferrer" className="text-zinc-400 hover:text-purple-400 transition-colors"><Github className="h-5 w-5" /></a>
             </div>
           </div>
         </div>

@@ -14,6 +14,7 @@
   --color-card-foreground: #fafafa;
   --color-muted: #27272a;
   --color-muted-foreground: #a1a1aa;
+  --font-ubuntu: var(--font-ubuntu);
 }
 
 @layer base {
