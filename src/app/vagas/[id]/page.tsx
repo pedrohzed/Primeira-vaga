@@ -88,7 +88,7 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
               <div className="flex flex-wrap items-center gap-x-6 gap-y-3 text-zinc-400">
                 <span className="flex items-center gap-2">
                   <Building2 className="h-5 w-5 text-purple-400" />
-                  {job.company}
+                  {job.companyName}
                 </span>
                 <span className="flex items-center gap-2">
                   <MapPin className="h-5 w-5 text-purple-400" />

@@ -25,18 +25,18 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
         .from('applications')
         .select('id')
         .eq('job_id', jobId)
-        .eq('applicant_id', userId)
-        .single();
+        .eq('applicant_id', userId!)
+        .maybeSingle();
       
       if (application) setHasApplied(true);
 
-      // Check saved
+      // Check saved (saved_jobs has composite PK: job_id + user_id, no id column)
       const { data: savedJob } = await supabase
         .from('saved_jobs')
-        .select('id')
+        .select('job_id')
         .eq('job_id', jobId)
-        .eq('user_id', userId)
-        .single();
+        .eq('user_id', userId!)
+        .maybeSingle();
       
       if (savedJob) setHasSaved(true);
 
@@ -64,7 +64,7 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
     const { error } = await supabase.from('applications').insert({
       job_id: jobId,
       applicant_id: userId,
-      status: 'pendente'
+      status: 'em_analise'
     });
     
     if (error) {
@@ -84,11 +84,19 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
     
     setIsLoading(true);
     if (hasSaved) {
-      await supabase.from('saved_jobs').delete().eq('job_id', jobId).eq('user_id', userId);
-      setHasSaved(false);
+      const { error } = await supabase.from('saved_jobs').delete().eq('job_id', jobId).eq('user_id', userId!);
+      if (error) {
+        alert("Erro ao remover vaga salva: " + error.message);
+      } else {
+        setHasSaved(false);
+      }
     } else {
-      await supabase.from('saved_jobs').insert({ job_id: jobId, user_id: userId });
-      setHasSaved(true);
+      const { error } = await supabase.from('saved_jobs').insert({ job_id: jobId, user_id: userId });
+      if (error) {
+        alert("Erro ao salvar vaga: " + error.message);
+      } else {
+        setHasSaved(true);
+      }
     }
     setIsLoading(false);
   };
