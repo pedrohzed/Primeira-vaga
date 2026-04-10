@@ -14,7 +14,7 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
   const router = useRouter();
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId || !jobId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
       setIsLoading(false);
       return;
     }
@@ -46,6 +46,11 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
   }, [jobId, userId, supabase]);
 
   const handleApply = async () => {
+    if (!jobId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      alert("Esta é uma vaga de demonstração. Você só pode se candidatar a vagas reais publicadas por empresas.");
+      return;
+    }
+
     if (!userId) {
        alert("Você precisa estar logado para se candidatar!");
        router.push("/login");
@@ -77,6 +82,11 @@ export function JobActionsCandidate({ jobId, userId }: { jobId: string, userId?:
   };
 
   const handleSave = async () => {
+    if (!jobId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      alert("Esta é uma vaga de demonstração. Você só pode salvar vagas reais publicadas por empresas.");
+      return;
+    }
+
     if (!userId) {
        router.push("/login");
        return;

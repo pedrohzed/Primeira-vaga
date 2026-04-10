@@ -42,7 +42,7 @@ export default async function CandidatosPage() {
       status,
       created_at,
       jobs (id, title),
-      profiles:applicant_id (
+      profiles (
         id, name, bio, area, resume_url
       )
     `)
@@ -110,8 +110,8 @@ export default async function CandidatosPage() {
                     Sem Anexo
                   </Button>
                 )}
-                <Button className="w-full sm:w-auto" variant="default" onClick={() => {}}>
-                  Agendar Entrevista
+                <Button className="w-full sm:w-auto" variant="default" asChild>
+                  <Link href={`mailto:${app.profiles?.id}@exemplo.com`}>Agendar Entrevista</Link>
                 </Button>
               </div>
             </div>
