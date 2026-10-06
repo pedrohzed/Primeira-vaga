@@ -1,4 +1,4 @@
-# 🚪 Primeira Vaga
+#  Primeira Vaga
 
 ![status](https://img.shields.io/badge/status-em%20desenvolvimento-purple)
 ![ODS](https://img.shields.io/badge/ODS-8-blue)
@@ -10,35 +10,35 @@ Este projeto foi desenvolvido com foco no **ODS 8 — Trabalho Decente e Crescim
 
 ---
 
-# 🎯 Objetivo
+#  Objetivo
 
 Muitos jovens enfrentam dificuldades para conseguir o **primeiro emprego** por falta de experiência ou acesso a oportunidades.
 
 O **Primeira Vaga** busca resolver esse problema oferecendo:
 
-- 📍 vagas próximas ao usuário  
-- 💼 oportunidades de estágio e jovem aprendiz  
-- 📚 cursos gratuitos para desenvolvimento profissional  
-- 🤝 conexão entre jovens e empresas  
+-  vagas próximas ao usuário  
+-  oportunidades de estágio e jovem aprendiz  
+-  cursos gratuitos para desenvolvimento profissional  
+-  conexão entre jovens e empresas  
 
 ---
 
-# 💡 Funcionalidades
+#  Funcionalidades
 
-## 🔎 Busca de vagas
+##  Busca de vagas
 Usuários podem visualizar vagas disponíveis próximas a eles.
 
-## 📚 Cursos gratuitos
+##  Cursos gratuitos
 A plataforma recomenda cursos que ajudam jovens a desenvolver habilidades importantes para o mercado de trabalho.
 
-## 👤 Perfil profissional
+##  Perfil profissional
 Cada usuário pode criar um perfil com:
 
 - habilidades
 - cursos realizados
 - histórico de candidaturas
 
-## 🏢 Área para empresas
+##  Área para empresas
 Empresas podem:
 
 - publicar vagas
@@ -47,7 +47,7 @@ Empresas podem:
 
 ---
 
-# 🌍 Impacto Social
+#  Impacto Social
 
 O projeto contribui diretamente para o:
 
@@ -62,7 +62,7 @@ A plataforma ajuda a:
 
 ---
 
-# 🖥️ Tecnologias Utilizadas
+#  Tecnologias Utilizadas
 
 - HTML  
 - CSS
@@ -77,7 +77,7 @@ A plataforma ajuda a:
 ---
 
 
-📚 Referências Bibliográficas
+ Referências Bibliográficas
 As seguintes fontes foram utilizadas para pesquisa e fundamentação do projeto:
 
 Organização das Nações Unidas (ONU).
