@@ -13,6 +13,7 @@ export default function CadastroCurriculoPage() {
   const [area, setArea] = useState("");
   const [bio, setBio] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [hasResume, setHasResume] = useState(false);
   
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +27,14 @@ export default function CadastroCurriculoPage() {
     async function loadUser() {
       const { data } = await supabase.auth.getUser();
       setUser(data?.user || null);
+      if (data.user) {
+        const { data: profile } = await supabase.from("profiles").select("area, bio, resume_url").eq("id", data.user.id).maybeSingle();
+        if (profile) {
+          setArea(profile.area ?? "");
+          setBio(profile.bio ?? "");
+          setHasResume(Boolean(profile.resume_url));
+        }
+      }
     }
     loadUser();
   }, [supabase]);
@@ -156,8 +165,8 @@ export default function CadastroCurriculoPage() {
             </div>
 
             <div className="flex justify-between items-center gap-4 mt-8 pt-6 border-t border-white/10">
-              {user && <DeleteAccountBtn userId={user.id} />}
-              <Button onClick={() => setStep(2)}>
+              {user && <DeleteAccountBtn />}
+              <Button onClick={() => setStep(2)} disabled={!area || bio.trim().length < 20}>
                 Próximo passo <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
@@ -191,7 +200,7 @@ export default function CadastroCurriculoPage() {
                   {file ? file.name : "Clique para enviar seu currículo"}
                 </h4>
                 <p className="text-sm text-zinc-500">
-                  {file ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : "Apenas arquivos PDF até 5MB"}
+                  {file ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : hasResume ? "Você já tem um currículo. Envie outro apenas se quiser substituí-lo." : "Apenas arquivos PDF até 5MB"}
                 </p>
               </div>
             </div>
@@ -200,7 +209,7 @@ export default function CadastroCurriculoPage() {
               <Button variant="ghost" onClick={() => setStep(1)} disabled={isLoading}>
                 Voltar
               </Button>
-              <Button onClick={handleComplete} disabled={isLoading || !file}>
+              <Button onClick={handleComplete} disabled={isLoading || (!file && !hasResume)}>
                 {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Concluir Cadastro"}
               </Button>
             </div>

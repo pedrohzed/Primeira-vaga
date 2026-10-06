@@ -24,9 +24,12 @@ export default function PostarVagaPage() {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("edit");
     if (id) {
-      setEditId(id);
       const fetchJob = async () => {
-        const { data } = await supabase.from('jobs').select('*').eq('id', id).single();
+        const { data: authData } = await supabase.auth.getUser();
+        if (!authData.user) return;
+        setEditId(id);
+        const { data: ownCompany } = await supabase.from("companies").select("id").eq("user_id", authData.user.id).maybeSingle();
+        const { data, error: jobError } = await supabase.from('jobs').select('*').eq('id', id).eq('company_id', ownCompany?.id ?? "").maybeSingle();
         if (data) {
           setTitle(data.title);
           setDescription(data.description);
@@ -34,6 +37,8 @@ export default function PostarVagaPage() {
           setType(data.type);
           setSalaryRange(data.salary_range || "");
           setRequirements((data.requirements || []).join("\n"));
+        } else if (jobError || !data) {
+          setError("Vaga não encontrada ou você não tem permissão para editá-la.");
         }
       };
       fetchJob();
@@ -57,7 +62,7 @@ export default function PostarVagaPage() {
     // Usually we would link to a companies table, but let's safely ensure the user is an 'empresa'
     const { data: profile, error: profileError } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, name")
       .eq("id", userData.user.id)
       .single();
 
@@ -99,7 +104,7 @@ export default function PostarVagaPage() {
     }
 
     // Insert job
-    const reqArray = requirements.split("\n").filter(r => r.trim() !== "");
+    const reqArray = requirements.split("\n").map((requirement) => requirement.trim()).filter(Boolean);
 
     const payload = {
       company_id: companyId,
@@ -113,8 +118,8 @@ export default function PostarVagaPage() {
 
     let jobError;
     if (editId) {
-      const { error } = await supabase.from("jobs").update(payload).eq('id', editId);
-      jobError = error;
+      const { data: updatedJob, error } = await supabase.from("jobs").update(payload).eq('id', editId).eq("company_id", companyId).select("id").maybeSingle();
+      jobError = error ?? (!updatedJob ? new Error("Vaga não encontrada ou sem permissão para editar.") : null);
     } else {
       const { error } = await supabase.from("jobs").insert(payload);
       jobError = error;
@@ -157,6 +162,7 @@ export default function PostarVagaPage() {
             <input
               type="text"
               required
+              minLength={4}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
@@ -171,6 +177,7 @@ export default function PostarVagaPage() {
             <input
               type="text"
               required
+              minLength={10}
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               className="w-full rounded-xl border border-white/10 bg-zinc-900/50 px-4 py-3 text-white placeholder-zinc-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500"
@@ -206,6 +213,7 @@ export default function PostarVagaPage() {
           <label className="mb-2 block text-sm font-medium text-zinc-300">Descrição da Vaga</label>
           <textarea
             required
+            minLength={20}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
@@ -218,6 +226,7 @@ export default function PostarVagaPage() {
           <label className="mb-2 block text-sm font-medium text-zinc-300">Requisitos (Um por linha)</label>
           <textarea
             required
+            minLength={3}
             value={requirements}
             onChange={(e) => setRequirements(e.target.value)}
             rows={4}

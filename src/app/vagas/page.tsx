@@ -37,19 +37,18 @@ export default function VagasPage() {
           tags: [], // Could map tags if implemented
           createdAt: j.created_at
         }));
-        // Show supabase jobs first, then mock jobs
-        setJobs([...formattedJobs, ...MOCK_JOBS]);
+        // Dados de demonstração só aparecem quando ainda não há vagas publicadas.
+        setJobs(formattedJobs.length > 0 ? formattedJobs : MOCK_JOBS);
       }
     };
     fetchJobs();
-  }, []);
+  }, [supabase]);
 
   const filteredJobs = jobs.filter((job) => {
-    const matchesSearch = job.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          job.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesTag = selectedTag ? job.tags.some(t => t.id === selectedTag) : true;
+    const normalizedSearch = searchTerm.trim().toLocaleLowerCase("pt-BR");
+    const matchesSearch = [job.title, job.company, job.location, job.description].some((value) => value.toLocaleLowerCase("pt-BR").includes(normalizedSearch));
+    const matchesTag = selectedTag ? job.tags.some((tag) => tag.id === selectedTag) : true;
     const matchesType = selectedTypes.length > 0 ? selectedTypes.includes(job.type.toLowerCase()) : true;
-    
     return matchesSearch && matchesTag && matchesType;
   });
 
@@ -93,27 +92,11 @@ export default function VagasPage() {
                   ))}
                 </div>
               </div>
-              
               <div className="pt-4 border-t border-white/5">
                 <label className="text-sm font-medium text-zinc-400 mb-3 block">Tags e Habilidades</label>
                 <div className="flex flex-wrap gap-2">
-                  <Badge 
-                    variant={selectedTag === null ? "default" : "secondary"}
-                    className="cursor-pointer"
-                    onClick={() => setSelectedTag(null)}
-                  >
-                    Todas
-                  </Badge>
-                  {TAGS.map(tag => (
-                    <Badge 
-                      key={tag.id}
-                      variant={selectedTag === tag.id ? "default" : "secondary"}
-                      className="cursor-pointer"
-                      onClick={() => setSelectedTag(tag.id)}
-                    >
-                      {tag.name}
-                    </Badge>
-                  ))}
+                  <Badge variant={selectedTag === null ? "default" : "secondary"} className="cursor-pointer" onClick={() => setSelectedTag(null)}>Todas</Badge>
+                  {TAGS.map((tag) => <Badge key={tag.id} variant={selectedTag === tag.id ? "default" : "secondary"} className="cursor-pointer" onClick={() => setSelectedTag(tag.id)}>{tag.name}</Badge>)}
                 </div>
               </div>
             </div>

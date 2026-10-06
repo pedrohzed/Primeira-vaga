@@ -101,3 +101,26 @@ https://veja.abril.com.br/coluna/balanco-social/desemprego-entre-jovens-de-18-a-
 # Como acessar o Website
 
 https://primeira-vaga.vercel.app/
+
+---
+
+# Desenvolvimento local
+
+1. Copie `.env.example` para `.env.local` e informe a URL e a chave pública do seu projeto Supabase.
+2. Execute a migração em `supabase/migrations/202610060001_company_follows_and_integrity.sql` no SQL Editor do Supabase.
+3. Instale e inicie o projeto:
+
+```bash
+npm ci
+npm run dev
+```
+
+O site ficará disponível em `http://localhost:3000`.
+
+## Verificações
+
+```bash
+npm run lint
+npx tsc --noEmit
+npm run build
+```

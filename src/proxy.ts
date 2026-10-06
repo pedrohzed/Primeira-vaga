@@ -15,7 +15,7 @@ export default async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })
@@ -31,9 +31,12 @@ export default async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isPublicRoute = request.nextUrl.pathname === '/' || 
-                        request.nextUrl.pathname === '/login' || 
-                        request.nextUrl.pathname === '/register';
+  const isPublicRoute = request.nextUrl.pathname === '/' ||
+                        request.nextUrl.pathname === '/login' ||
+                        request.nextUrl.pathname === '/register' ||
+                        request.nextUrl.pathname === '/vagas' ||
+                        request.nextUrl.pathname.startsWith('/vagas/') ||
+                        request.nextUrl.pathname.startsWith('/empresas/');
 
   if (!user && !isPublicRoute && !request.nextUrl.pathname.startsWith('/_next') && !request.nextUrl.pathname.startsWith('/favicon.ico')) {
     // se o user não estiver logado e a rota nao for publica, redireciona para a raiz ou login

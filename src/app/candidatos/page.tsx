@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { CheckCircle2, ChevronRight, FileText, User } from "lucide-react";
+import { FileText, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { ApplicationActions } from "@/components/jobs/ApplicationActions";
 
 export default async function CandidatosPage() {
   const supabase = await createClient();
@@ -33,30 +34,16 @@ export default async function CandidatosPage() {
     );
   }
 
-  // Fetch applications for all jobs posted by this company
-  // We join jobs and profiles of the applicants
-  const { data: applications } = await supabase
-    .from('applications')
-    .select(`
-      id,
-      status,
-      created_at,
-      jobs (id, title),
-      profiles (
-        id, name, bio, area, resume_url
-      )
-    `)
-    // Normally we filter where job.company_id = company.id
-    // Supabase JS allows inner joins, but we can just fetch jobs for company then applications, or filter applications manually.
-    // For simplicity, let's fetch all applications and filter in memory if the relation is too deep for straightforward PostgREST
-    // Actually, we can just do:
-    .order('created_at', { ascending: false });
-
-  // Fetch jobs of this company separately for clean filtering
   const { data: myJobs } = await supabase.from('jobs').select('id, title').eq('company_id', company.id);
   const myJobIds = myJobs?.map(j => j.id) || [];
-
-  const companyApplications = applications?.filter((app: any) => myJobIds.includes(app.jobs?.id)) || [];
+  const { data: companyApplications } = myJobIds.length > 0
+    ? await supabase
+        .from('applications')
+        .select('id, status, created_at, jobs(id, title), profiles(id, name, bio, area, resume_url)')
+        .in('job_id', myJobIds)
+        .order('created_at', { ascending: false })
+    : { data: [] };
+  const applicationsList = companyApplications ?? [];
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
@@ -68,13 +55,13 @@ export default async function CandidatosPage() {
       </div>
 
       <div className="space-y-6">
-        {companyApplications.length === 0 ? (
+        {applicationsList.length === 0 ? (
           <div className="text-center bg-zinc-900 border border-white/5 rounded-xl p-12">
             <h3 className="text-xl font-bold text-white mb-2">Nenhum candidato ainda</h3>
             <p className="text-zinc-400">Assim que os candidatos aplicarem nas suas vagas, os currículos aparecerão aqui.</p>
           </div>
         ) : (
-          companyApplications.map((app: any) => (
+          applicationsList.map((app: any) => (
             <div key={app.id} className="p-6 rounded-xl bg-zinc-900 border border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div className="flex-1">
                 <div className="flex items-start gap-4">
@@ -110,9 +97,7 @@ export default async function CandidatosPage() {
                     Sem Anexo
                   </Button>
                 )}
-                <Button className="w-full sm:w-auto" variant="default" asChild>
-                  <Link href={`mailto:${app.profiles?.id}@exemplo.com`}>Agendar Entrevista</Link>
-                </Button>
+                <ApplicationActions applicationId={app.id} candidateId={app.profiles?.id} initialStatus={app.status} />
               </div>
             </div>
           ))

@@ -26,6 +26,11 @@ export default function CadastroEmpresaPage() {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUser(data.user);
+        const { data: roleProfile } = await supabase.from('profiles').select('role, name').eq('id', data.user.id).single();
+        if (roleProfile?.role !== 'empresa') {
+          setError("Esta área é exclusiva para perfis de empresa.");
+          return;
+        }
         const { data: comp } = await supabase.from('companies').select('*').eq('user_id', data.user.id).single();
         if (comp) {
           setName(comp.name || "");
@@ -33,8 +38,7 @@ export default function CadastroEmpresaPage() {
           setWebsite(comp.website || "");
         } else {
           // prefill from profile
-          const { data: prof } = await supabase.from('profiles').select('name').eq('id', data.user.id).single();
-          if (prof) setName(prof.name);
+          if (roleProfile) setName(roleProfile.name);
         }
       }
     }
@@ -52,6 +56,8 @@ export default function CadastroEmpresaPage() {
     setSuccess(null);
 
     try {
+      const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+      if (profile?.role !== "empresa") throw new Error("Apenas perfis de empresa podem editar estes dados.");
       const { data: comp } = await supabase.from('companies').select('id').eq('user_id', user.id).single();
 
       if (comp) {
@@ -137,7 +143,7 @@ export default function CadastroEmpresaPage() {
           </div>
 
           <div className="pt-6 flex justify-between items-center border-t border-white/5 mt-8 pt-8">
-            {user && <DeleteAccountBtn userId={user.id} />}
+            {user && <DeleteAccountBtn />}
             <Button onClick={handleComplete} disabled={isLoading || !name}>
                {isLoading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Salvando...</> : "Concluir Perfil"}
             </Button>

@@ -72,7 +72,7 @@ export default async function DashboardPage() {
                     <Button variant="outline" asChild>
                       <Link href={`/vagas/${job.id}`}>Ver Detalhes</Link>
                     </Button>
-                    <JobActions jobId={job.id} />
+                    <JobActions jobId={job.id} companyId={company.id} />
                   </div>
                 </div>
               ))}
@@ -164,7 +164,7 @@ export default async function DashboardPage() {
               </>
             )}
           </div>
-          <DeleteAccountBtn userId={user.id} />
+          <DeleteAccountBtn />
         </div>
 
         <div className="lg:col-span-2 space-y-12">

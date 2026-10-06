@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Building2, ArrowLeft, Globe, MapPin, Calendar, BriefcaseBusiness } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { CompanyFollowButton } from "@/components/companies/CompanyFollowButton";
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -48,7 +49,6 @@ export default async function EmpresaDetailsPage({ params }: EmpresaPageProps) {
 
       <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 md:p-10 mb-8 backdrop-blur-sm relative overflow-hidden">
         <div className="absolute top-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2 -translate-x-1/2"></div>
-        
         <div className="relative z-10 flex flex-col md:flex-row gap-8 items-start md:items-center">
           <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-purple-900 border-2 border-purple-500 flex items-center justify-center text-4xl sm:text-5xl font-bold text-white shrink-0 uppercase glow-purple shadow-2xl">
             {company.name.charAt(0)}
@@ -113,9 +113,10 @@ export default async function EmpresaDetailsPage({ params }: EmpresaPageProps) {
             <p className="text-sm text-zinc-300 mb-6">Acompanhe as oportunidades e prepare seu currículo para se destacar nos processos seletivos desta empresa.</p>
             <div className="space-y-3">
               {userRole !== 'empresa' && (
-                <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild>
-                  <Link href="/cadastro">Cadastrar meu currículo</Link>
-                </Button>
+                <>
+                  <Button className="w-full bg-purple-600 hover:bg-purple-700" asChild><Link href="/cadastro">Cadastrar meu currículo</Link></Button>
+                  {userData.user && <CompanyFollowButton companyId={company.id} userId={userData.user.id} />}
+                </>
               )}
               <Button className="w-full" variant="outline" asChild>
                 <Link href={`/mensagens?contact=${company.user_id}`}>Falar com o Recrutador</Link>

@@ -57,7 +57,8 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
 
   // Fallback to MOCK_JOBS
   if (!job) {
-    job = MOCK_JOBS.find((j) => j.id === p.id);
+    const mockJob = MOCK_JOBS.find((item) => item.id === p.id);
+    if (mockJob) job = { ...mockJob, companyName: mockJob.company, companyId: null };
   }
 
   if (!job) {
@@ -79,7 +80,6 @@ export default async function JobDetailsPage({ params }: JobPageProps) {
 
       <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 md:p-10 mb-8 backdrop-blur-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-        
         <div className="relative z-10">
           <div className="flex flex-wrap items-start justify-between gap-6">
             <div className="space-y-4">
